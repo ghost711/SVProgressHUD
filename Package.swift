@@ -8,7 +8,7 @@ import PackageDescription
 let package = Package(
     name: "SVProgressHUD",
     platforms: [
-        .iOS(.v14), .tvOS(.v14)
+        .iOS("14.0"), .tvOS("14.0")
     ],
     products: [
         .library(
