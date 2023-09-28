@@ -4,8 +4,9 @@
 //
 //  Copyright (c) 2017-2019 Tobias Tiemerding. All rights reserved.
 //
-
+#if __has_include(<UIKit/UIKit.h>)
 #import <UIKit/UIKit.h>
+#endif
 
 @interface SVProgressAnimatedView : UIView
 
