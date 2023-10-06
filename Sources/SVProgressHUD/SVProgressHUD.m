@@ -651,6 +651,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 + (UIWindow *)getKeyWindow {
     //return view.window?.windowScene?.keyWindow
+    #if false
     if (@available(iOS 15.0, *)) {
         // return UIApplication.shared.connectedScenes.compactMap {
         UIWindow *win;           //     ($0 as? UIWindowScene)?.keyWindow }.last
@@ -668,6 +669,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
             }
         }
     }
+    #endif
     //[UIScreen mainScreen]
     //return UIApplication.sharedApplication.delegate.window;
     return UIApplication.sharedApplication.keyWindow; /// If all else fails.
