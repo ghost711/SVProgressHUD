@@ -17,10 +17,13 @@ let package = Package(
                 //exclude: ["framework"],
                 publicHeadersPath: "include",
                 //cSettings: [.define("TARGET_OS_IOS", to: "1")],
+                cSettings: [
+                    CSetting.define("SV_APP_EXTENSIONS", to: "1")
+                ],
                 linkerSettings: [
                     .linkedFramework("CoreGraphics"),
                     .linkedFramework("QuartzCore"),
                     .linkedFramework("UIKit"),
-                ])
+                ]) //,
     ]
 )
