@@ -70,7 +70,9 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     static SVProgressHUD *sharedView;
 #if !defined(SV_APP_EXTENSIONS)
     // dispatch_once(&once, ^{ sharedView = [[self alloc] initWithFrame:[[[UIApplication sharedApplication] delegate] window].bounds]; });
-    dispatch_once(&once, ^{ sharedView = [[self alloc] initWithFrame:[[UIApplication sharedApplication] keyWindow].bounds]; });
+    // dispatch_once(&once, ^{ sharedView = [[self alloc] initWithFrame:[[UIApplication sharedApplication] keyWindow].bounds]; });
+    UIWindow *win = [self getKeyWindow];
+    dispatch_once(&once, ^{ sharedView = [[self alloc] initWithFrame:win.bounds]; });
 #else
     dispatch_once(&once, ^{ sharedView = [[self alloc] initWithFrame:[[UIScreen mainScreen] bounds]]; });
 #endif
@@ -647,13 +649,42 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     return (self.statusLabel.text ? @{SVProgressHUDStatusUserInfoKey : self.statusLabel.text} : nil);
 }
 
++ (UIWindow *)getKeyWindow {
+    //return view.window?.windowScene?.keyWindow
+    if (@available(iOS 15.0, *)) {
+        // return UIApplication.shared.connectedScenes.compactMap {
+        UIWindow *win;           //     ($0 as? UIWindowScene)?.keyWindow }.last
+        for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+            if (scene != nil) {
+                win = ((UIWindowScene *)scene).keyWindow;
+            }
+        }
+        return win;
+    } else { // Fallback on earlier versions:
+        // UIApplication.shared.windows.first { $0.isKeyWindow }
+        for (UIWindow *win in UIApplication.sharedApplication.windows) {
+            if (win.isKeyWindow) {
+                return win;
+            }
+        }
+    }
+    //[UIScreen mainScreen]
+    //return UIApplication.sharedApplication.delegate.window;
+    return UIApplication.sharedApplication.keyWindow; /// If all else fails.
+}
+
+- (UIWindow *)getKeyWindow {
+    return [SVProgressHUD getKeyWindow];
+}
+
 - (void)positionHUD:(NSNotification*)notification {
     CGFloat keyboardHeight = 0.0f;
     double animationDuration = 0.0;
 
 #if !defined(SV_APP_EXTENSIONS) && TARGET_OS_IOS
     // self.frame = [[[UIApplication sharedApplication] delegate] window].bounds;
-    self.frame = [[UIApplication sharedApplication] keyWindow].bounds;
+    // self.frame = [[UIApplication sharedApplication] keyWindow].bounds;
+    self.frame = self.getKeyWindow.bounds;
     UIInterfaceOrientation orientation = UIApplication.sharedApplication.statusBarOrientation;
 #elif !defined(SV_APP_EXTENSIONS) && !TARGET_OS_IOS
     self.frame= [UIApplication sharedApplication].keyWindow.bounds;
@@ -1037,7 +1068,8 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                     
                     // Tell the rootViewController to update the StatusBar appearance
 #if !defined(SV_APP_EXTENSIONS) && TARGET_OS_IOS
-                    UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
+                    //UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
+                    UIViewController *rootController = self.getKeyWindow.rootViewController;
                     [rootController setNeedsStatusBarAppearanceUpdate];
 #endif
                     
@@ -1229,7 +1261,8 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     // Update frames
 #if !defined(SV_APP_EXTENSIONS)
     // CGRect windowBounds = [[[UIApplication sharedApplication] delegate] window].bounds;
-    CGRect windowBounds = [[UIApplication sharedApplication] keyWindow].bounds;
+    //CGRect windowBounds = [[UIApplication sharedApplication] keyWindow].bounds;
+    CGRect windowBounds = self.getKeyWindow.bounds;
     _controlView.frame = windowBounds;
 #else
     _controlView.frame = [UIScreen mainScreen].bounds;
