@@ -60,7 +60,20 @@
         
         CALayer *maskLayer = [CALayer layer];
         
-        NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
+        #if 0
+            NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
+        #else
+            /** Must use alt method to get bundle due to Swift Package Manager
+             being a pain: SWIFTPM_MODULE_BUNDLE. See:
+               ~/Library/Developer/Xcode/DerivedData/VERT_APPS-gbjjkmpxioazekgnkpnrkboqeisc/Build/Intermediates.noindex/SVProgressHUD.build/Debug-iphoneos/SVProgressHUD.build/DerivedSources/resource_bundle_accessor.h
+             ... And also the .m file.          Ref:
+             darjeelingsteve.com/articles/How-to-Use-Module-Resources-in-Objective-C-SPM-Packages.html
+             Ex, from Ref:
+             UIImage *image = [UIImage imageNamed:@"ImageName"
+                          inBundle:SWIFTPM_MODULE_BUNDLE withConfiguration:nil];
+             */
+            NSBundle *bundle = SWIFTPM_MODULE_BUNDLE;
+        #endif
         NSURL *url = [bundle URLForResource:@"SVProgressHUD" withExtension:@"bundle"];
         NSBundle *imageBundle = [NSBundle bundleWithURL:url];
         
