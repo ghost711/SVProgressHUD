@@ -418,14 +418,45 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
         _imageViewSize = CGSizeMake(28.0f, 28.0f);
         _shouldTintImages = YES;
         
-        NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
-        NSURL *url = [bundle URLForResource:@"SVProgressHUD" withExtension:@"bundle"];
-        NSBundle *imageBundle = [NSBundle bundleWithURL:url];
+        #if 0
+            NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
+            NSURL *url = [bundle URLForResource:@"SVProgressHUD" withExtension:@"bundle"];
+            NSBundle *imageBundle = [NSBundle bundleWithURL:url];
+            _infoImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"info" ofType:@"png"]];
+            _successImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"success" ofType:@"png"]];
+            _errorImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"error" ofType:@"png"]];
+        #else
+            /** Must use alt method to get bundle due to Swift Package Manager
+             being a pain: SWIFTPM_MODULE_BUNDLE. See:
+               ~/Library/Developer/Xcode/DerivedData/VERT_APPS-gbjjkmpxioazekgnkpnrkboqeisc/Build/Intermediates.noindex/SVProgressHUD.build/Debug-iphoneos/SVProgressHUD.build/DerivedSources/resource_bundle_accessor.h
+             ... And also the .m file.          Ref:
+             darjeelingsteve.com/articles/How-to-Use-Module-Resources-in-Objective-C-SPM-Packages.html
+             Ex, from Ref:
+             UIImage *image = [UIImage imageNamed:@"ImageName"
+                          inBundle:SWIFTPM_MODULE_BUNDLE withConfiguration:nil];
+             */
         
-        _infoImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"info" ofType:@"png"]];
-        _successImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"success" ofType:@"png"]];
-        _errorImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"error" ofType:@"png"]];
-
+        // if (@available(iOS 13.0, *)) {
+        //     _infoImage = [UIImage imageNamed:@"info.png"
+        //                   inBundle:SWIFTPM_MODULE_BUNDLE withConfiguration:nil];
+        //     _successImage = [UIImage imageNamed:@"success.png"
+        //                   inBundle:SWIFTPM_MODULE_BUNDLE withConfiguration:nil];
+        //     _errorImage = [UIImage imageNamed:@"error.png"
+        //                   inBundle:SWIFTPM_MODULE_BUNDLE withConfiguration:nil];
+        // } else {
+            //NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
+            NSBundle *bundle = SWIFTPM_MODULE_BUNDLE;
+            NSURL *url = [bundle URLForResource:@"SVProgressHUD" withExtension:@"bundle"];
+            NSBundle *imageBundle = [NSBundle bundleWithURL:url];
+            _infoImage = [UIImage imageWithContentsOfFile:
+                          [imageBundle pathForResource:@"info" ofType:@"png"]];
+            _successImage = [UIImage imageWithContentsOfFile:
+                             [imageBundle pathForResource:@"success" ofType:@"png"]];
+            _errorImage = [UIImage imageWithContentsOfFile:
+                           [imageBundle pathForResource:@"error" ofType:@"png"]];
+        // }
+        #endif
+    
         _ringThickness = 2.0f;
         _ringRadius = 18.0f;
         _ringNoTextRadius = 24.0f;

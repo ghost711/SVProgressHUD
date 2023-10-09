@@ -20,8 +20,8 @@ let package = Package(
                 path: "Sources/SVProgressHUD",
                 //exclude: ["framework"],
                 // sources: [String],
-                // resources: [.copy("SVProgressHUD.bundle")],
-                resources: [.copy("Resources")],
+                resources: [.copy("SVProgressHUD.bundle")],
+                // resources: [.copy("Resources")],
                 publicHeadersPath: "include",
                 //cSettings: [.define("TARGET_OS_IOS", to: "1")],
                 // cSettings: [
