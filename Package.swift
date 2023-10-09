@@ -9,17 +9,25 @@ let package = Package(
     name: "SVProgressHUD",
     platforms: [.macOS(.v10_14), .iOS(.v12), .tvOS(.v12)],
     products: [
+        /** Products define the executables and libraries a package produces,
+         and make them visible to other packages. */
         .library(name: "SVProgressHUD", targets: ["SVProgressHUD"]),
     ],
     targets: [
         // .target(name: "SVProgressHUD")
-        .target(name: "SVProgressHUD", path: "Sources/SVProgressHUD",
+        .target(name: "SVProgressHUD",
+                // dependencies: [Target.Dependency]
+                path: "Sources/SVProgressHUD",
                 //exclude: ["framework"],
+                // sources: [String],
+                resources: [.copy("SVProgressHUD.bundle")],
                 publicHeadersPath: "include",
                 //cSettings: [.define("TARGET_OS_IOS", to: "1")],
                 // cSettings: [
                 //     CSetting.define("SV_APP_EXTENSIONS", to: "1")
                 // ],
+                // cxxSettings: [CXXSetting],
+                // swiftSettings: [SwiftSetting],
                 linkerSettings: [
                     .linkedFramework("CoreGraphics"),
                     .linkedFramework("QuartzCore"),
